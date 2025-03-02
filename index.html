@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Braje.sh</title>
+  <title>Araknoid Retro Game</title>
   <style>
     /* Windows XP Bliss wallpaper background */
     body {
@@ -162,7 +162,7 @@
       height: 16px;
       margin-right: 5px;
     }
-    /* Start Menu fixed size */
+    /* Start Menu fixed size and styled like desktop icons */
     #startMenu {
       position: fixed;
       bottom: 40px;
@@ -188,13 +188,20 @@
       align-items: center;
       cursor: pointer;
     }
+    #startMenu li a {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
     #startMenu li:hover {
       background: #000080;
       color: #fff;
     }
     #startMenu li img {
-      width: 16px;
-      height: 16px;
+      width: 32px;
+      height: 32px;
       margin-right: 5px;
     }
     /* Right side of taskbar: container for clock */
@@ -371,20 +378,34 @@
     </div>
   </div>
   
-  <!-- Start Menu -->
+  <!-- Start Menu with same icons and texts as desktop icons -->
   <div id="startMenu">
     <ul>
       <li>
-        <img src="https://raw.githubusercontent.com/jdan/98.css/master/src/assets/my-computer.png" alt="My Computer">
-        My Computer
+        <a href="https://github.com/ElJuanDeag" target="_blank">
+          <img src="https://img.icons8.com/?size=32&id=nXgKLCSNhAWG&format=png&color=000000" alt="GitHub">
+          GitHub
+        </a>
       </li>
       <li>
-        <img src="https://raw.githubusercontent.com/jdan/98.css/master/src/assets/recycle-bin.png" alt="Recycle Bin">
-        Recycle Bin
+        <a href="https://www.linkedin.com/in/brajesh-kumar-6103401b4/" target="_blank">
+          <img src="https://img.icons8.com/?size=32&id=8808&format=png&color=000000" alt="LinkedIn">
+          LinkedIn
+        </a>
       </li>
       <li>
-        <img src="https://raw.githubusercontent.com/jdan/98.css/master/src/assets/notepad.png" alt="Notepad">
-        Notepad
+        <a href="mailto:reach.brajesh.kumar@gmail.com">
+          <img src="https://img.icons8.com/?size=32&id=sEACKi8zoWLu&format=png&color=000000" alt="Mail">
+          Mail
+        </a>
+      </li>
+      <li id="startMenuAraknoid">
+        <img src="https://img.icons8.com/?size=32&id=59655&format=png&color=000000" alt="Araknoid">
+        Araknoid
+      </li>
+      <li id="startMenuAdmin">
+        <img src="https://img.icons8.com/?size=32&id=4BQ253NEFFli&format=png&color=000000" alt="Admin">
+        Admin
       </li>
     </ul>
   </div>
@@ -459,6 +480,20 @@
       }
     });
     document.addEventListener("click", () => {
+      startMenu.style.display = "none";
+      startButton.classList.remove("active");
+    });
+    
+    // --- Start Menu item event listeners for Araknoid and Admin ---
+    document.getElementById("startMenuAraknoid").addEventListener("click", () => {
+      win98Window.style.display = "block";
+      resetGame();
+      startMenu.style.display = "none";
+      startButton.classList.remove("active");
+    });
+    document.getElementById("startMenuAdmin").addEventListener("click", () => {
+      adminWindow.style.display = "block";
+      resetAdminWindow();
       startMenu.style.display = "none";
       startButton.classList.remove("active");
     });
