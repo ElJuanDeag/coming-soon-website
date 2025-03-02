@@ -1,56 +1,722 @@
-<!doctype html>
-<html lang=en>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset=UTF-8 />
-    <meta name=description content="Free coming soon template">
-    <meta name=author content="Pawel Zuchowski">
-    <meta name=viewport content="width=device-width,initial-scale=1" />
-    <meta http-equiv=X-UA-Compatible content="ie=edge" />
-    <link rel=stylesheet href=https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css
-        integrity=sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO crossorigin=anonymous>
-    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel=stylesheet>
-    <link href="https://fonts.googleapis.com/css2?family=Muli:wght@300;700&display=swap" rel=stylesheet>
-    <link rel=stylesheet href="https://fonts.googleapis.com/css?family=Roboto&display=swap">
-    <script src=https://kit.fontawesome.com/3c09bcb51a.js></script>
-    <title>Comming Soon</title>
-    <link href="styles/main.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Araknoid Retro Game</title>
+  <style>
+    /* Windows XP Bliss wallpaper background */
+    body {
+      margin: 0;
+      background: url('https://archive.org/download/windows-xp-bliss-wallpaper/windows-xp-bliss-4k-lu-1920x1080.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #000;
+      font-family: 'MS Sans Serif', sans-serif;
+      position: relative;
+    }
+    /* Desktop icons styling in a vertical column on the left */
+    #desktopIcons {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .desktop-icon {
+      text-align: center;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .desktop-icon a {
+      text-decoration: none;
+      color: inherit;
+    }
+    .desktop-icon img {
+      display: block;
+      margin: 0 auto;
+      width: 32px;
+      height: 32px;
+      image-rendering: pixelated;
+      border: none;
+      box-shadow: none;
+    }
+    /* Retro Windows 98 game window styling */
+    #win98-window {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 800px;
+      height: 600px;
+      transform: translate(-50%, -50%);
+      border: 2px solid #fff;
+      background: #C0C0C0;
+      box-shadow: 3px 3px 0 #000;
+      z-index: 5;
+    }
+    .win98-titlebar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2px 5px;
+      background: linear-gradient(to bottom, #000080, #0000cd);
+      color: #fff;
+      font-size: 14px;
+      user-select: none;
+    }
+    .window-controls {
+      display: flex;
+      gap: 4px;
+    }
+    .control-btn {
+      background: #C0C0C0;
+      border: 2px outset #fff;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      line-height: 16px;
+      padding: 0;
+      cursor: pointer;
+    }
+    .control-btn:active {
+      border: 2px inset #fff;
+    }
+    .win98-content {
+      background: #fff;
+      position: relative;
+      width: 100%;
+      height: calc(100% - 24px);
+      overflow: hidden;
+    }
+    /* Canvas fills the game window content area */
+    #gameCanvas {
+      display: block;
+      background: #222;
+      width: 100%;
+      height: 100%;
+    }
+    /* Retro error popup styling */
+    #errorPopup {
+      position: absolute;
+      width: 300px;
+      background: #C0C0C0;
+      border: 2px solid #fff;
+      box-shadow: 3px 3px 0 #000;
+      display: none;
+      z-index: 10;
+      box-sizing: border-box;
+    }
+    #errorPopup .win98-titlebar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2px 5px;
+      background: linear-gradient(to bottom, #000080, #0000cd);
+      color: #fff;
+      font-size: 14px;
+      user-select: none;
+    }
+    #errorPopup .win98-content {
+      background: #fff;
+      padding: 10px;
+      font-size: 12px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    #errorPopup button {
+      margin-top: 10px;
+      font-family: 'MS Sans Serif', sans-serif;
+    }
+    /* Taskbar styling */
+    #taskbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background: #C0C0C0;
+      border-top: 2px solid #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      z-index: 1000;
+      box-sizing: border-box;
+    }
+    /* Left side of taskbar: Start button */
+    #startButton {
+      display: flex;
+      align-items: center;
+      background: #C0C0C0;
+      border: 2px outset #fff;
+      padding: 2px 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    /* Pressed (active) state for Start button */
+    #startButton.active {
+      border: 2px inset #fff;
+    }
+    #startButton img {
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+    }
+    /* Start Menu fixed size */
+    #startMenu {
+      position: fixed;
+      bottom: 40px;
+      left: 10px;
+      width: 207px;
+      height: 304px;
+      background: #C0C0C0;
+      border: 2px solid #fff;
+      box-shadow: 3px 3px 0 #000;
+      display: none;
+      z-index: 1001;
+      font-family: 'MS Sans Serif', sans-serif;
+      box-sizing: border-box;
+    }
+    #startMenu ul {
+      list-style: none;
+      margin: 0;
+      padding: 5px;
+    }
+    #startMenu li {
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    #startMenu li:hover {
+      background: #000080;
+      color: #fff;
+    }
+    #startMenu li img {
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+    }
+    /* Right side of taskbar: container for activation text and clock */
+    #taskbar-right {
+      margin-left: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+      border-left: 2px solid #fff;
+      padding-left: 10px;
+      font-size: 14px;
+      font-family: 'MS Sans Serif', sans-serif;
+    }
+    #clock {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #activationText {
+      font-size: 16px;
+      opacity: 0.65;
+    }
+    /* Admin Window styling */
+    #adminWindow {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 400px;
+      height: 300px;
+      transform: translate(-50%, -50%);
+      border: 2px solid #fff;
+      background: #C0C0C0;
+      box-shadow: 3px 3px 0 #000;
+      z-index: 6;
+      display: none;
+      font-family: 'MS Sans Serif', sans-serif;
+      box-sizing: border-box;
+    }
+    /* Dialpad styles for admin window */
+    #adminContent {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: calc(100% - 24px);
+    }
+    #pinDisplay {
+      font-size: 24px;
+      margin-bottom: 10px;
+      text-align: center;
+      min-height: 30px;
+    }
+    #dialpad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 300px;
+    }
+    .dial-btn {
+      padding: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      background: #C0C0C0;
+      border: 2px outset #fff;
+    }
+    .dial-btn:active {
+      border: 2px inset #fff;
+    }
+  </style>
 </head>
-
 <body>
-    <div class=container>
-        <div class=row>
-            <div class="left-wrap col-12 col-md-5">
-                <div class=left>
-                    <p><span class=days></span><span class=small> days</span></p>
-                    <p><span class=hours></span><span class=small> hours</span></p>
-                    <p>&nbsp;&nbsp;<span class=minutes></span><span class=small> minutes</span></p>
-                    <p>&nbsp;&nbsp;<span class=seconds></span><span class=small> seconds</span></p>
-                </div>
-            </div>
-            <div class="col-12 col-md-7 right">
-                <div class=mainInfo>
-                    <h1>COMING SOON</h1>
-                    <p class=slogan>Nothing will happen if you subscribe, it is just the placeholder template that I used. </p>
-                    <form class=form-subscribe action=#> <input type=email class=form placeholder="Your email address"
-                            required> <button type=submit>Subscribe ?</button> </form>
-                </div>
-                <ul class=icon-list>
-                    <li class=icon><a class=twitter href=google.com></a></li>
-                    <li class=icon><a class=linkedin href=google.com></a></li>
-                    <li class=icon><a class=facebook href=google.com></a></li>
-                    <li class=icon><a class=instagram href=google.com></a></li>
-                    <li class=icon><a class=youtube href=google.com></a></li>
-                    <li class=icon><a class=github href=google.com></a></li>
-                    <li class=icon><a class=stackoverflow href=google.com></a></li>
-                    <li class=icon><a class=medium href=google.com></a></li>
-                    
-                </ul>
-            </div>
-        </div>
+  <!-- Desktop icons (vertical column on the left) -->
+  <div id="desktopIcons">
+    <!-- GitHub Icon -->
+    <div class="desktop-icon">
+      <a href="https://github.com/yourgithub" target="_blank">
+        <img src="https://img.icons8.com/?size=32&id=nXgKLCSNhAWG&format=png&color=000000" alt="GitHub">
+        <span>GitHub</span>
+      </a>
     </div>
-    <script type="text/javascript" src="scripts/bundle.js"></script>
- 
-</body>
+    <!-- LinkedIn Icon -->
+    <div class="desktop-icon">
+      <a href="https://linkedin.com/in/yourlinkedin" target="_blank">
+        <img src="https://img.icons8.com/?size=32&id=8808&format=png&color=000000" alt="LinkedIn">
+        <span>LinkedIn</span>
+      </a>
+    </div>
+    <!-- Mail Icon -->
+    <div class="desktop-icon">
+      <a href="mailto:yourmail@example.com" target="_blank">
+        <img src="https://img.icons8.com/?size=32&id=sEACKi8zoWLu&format=png&color=000000" alt="Mail">
+        <span>Mail</span>
+      </a>
+    </div>
+    <!-- Araknoid Game Icon -->
+    <div class="desktop-icon" id="gameDesktopIcon">
+      <img src="https://img.icons8.com/?size=32&id=59655&format=png&color=000000" alt="Araknoid">
+      <span>Araknoid</span>
+    </div>
+    <!-- Admin Icon -->
+    <div class="desktop-icon" id="adminDesktopIcon">
+      <img src="https://img.icons8.com/?size=32&id=4BQ253NEFFli&format=png&color=000000" alt="Admin">
+      <span>Admin</span>
+    </div>
+  </div>
 
+  <!-- Retro Windows 98 game window -->
+  <div id="win98-window">
+    <div class="win98-titlebar">
+      <span>Araknoid</span>
+      <div class="window-controls">
+        <button class="control-btn" id="minimizeBtn">_</button>
+        <button class="control-btn" id="maximizeBtn">□</button>
+        <button class="control-btn" id="closeBtn">X</button>
+      </div>
+    </div>
+    <div class="win98-content">
+      <canvas id="gameCanvas"></canvas>
+      <!-- Retro error popup inside the game window -->
+      <div id="errorPopup">
+        <div class="win98-titlebar">
+          <span>Error</span>
+          <div class="window-controls">
+            <button class="control-btn" id="minimizeErrorBtn">_</button>
+            <button class="control-btn" id="maximizeErrorBtn">□</button>
+            <button class="control-btn" id="closeErrorBtn">X</button>
+          </div>
+        </div>
+        <div class="win98-content">
+          <p>Game Over!</p>
+          <button id="errorOkButton">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Window -->
+  <div id="adminWindow">
+    <div class="win98-titlebar">
+      <span>Admin</span>
+      <div class="window-controls">
+        <button class="control-btn" id="adminCloseBtn">X</button>
+      </div>
+    </div>
+    <div class="win98-content" id="adminContent">
+      <!-- Dialpad layout will be inserted here -->
+    </div>
+  </div>
+
+  <!-- Taskbar -->
+  <div id="taskbar">
+    <!-- Left: Start Button using provided icon -->
+    <button id="startButton">
+      <img src="https://98.js.org/images/start.png" alt="Start">
+      Start
+    </button>
+    <!-- Right: Activation text and current date/time -->
+    <div id="taskbar-right">
+      <div id="activationText">
+        Made with love by Brajesh Inspired from 98.js.org
+      </div>
+      <span id="clock"></span>
+    </div>
+  </div>
+  
+  <!-- Start Menu -->
+  <div id="startMenu">
+    <ul>
+      <li>
+        <img src="https://raw.githubusercontent.com/jdan/98.css/master/src/assets/my-computer.png" alt="My Computer">
+        My Computer
+      </li>
+      <li>
+        <img src="https://raw.githubusercontent.com/jdan/98.css/master/src/assets/recycle-bin.png" alt="Recycle Bin">
+        Recycle Bin
+      </li>
+      <li>
+        <img src="https://raw.githubusercontent.com/jdan/98.css/master/src/assets/notepad.png" alt="Notepad">
+        Notepad
+      </li>
+    </ul>
+  </div>
+  
+  <script>
+    // --- Window Controls for Main Game Window ---
+    const win98Window = document.getElementById("win98-window");
+    const gameContent = win98Window.querySelector(".win98-content");
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const errorPopup = document.getElementById("errorPopup");
+    const errorOkButton = document.getElementById("errorOkButton");
+    
+    const minimizeBtn = document.getElementById("minimizeBtn");
+    const maximizeBtn = document.getElementById("maximizeBtn");
+    const closeBtn = document.getElementById("closeBtn");
+    
+    minimizeBtn.addEventListener("click", () => {
+      gameContent.style.display = gameContent.style.display === "none" ? "block" : "none";
+    });
+    maximizeBtn.addEventListener("click", () => {
+      if(win98Window.classList.contains("maximized")){
+        win98Window.style.width = "800px";
+        win98Window.style.height = "600px";
+        win98Window.classList.remove("maximized");
+      } else {
+        win98Window.style.width = window.innerWidth + "px";
+        win98Window.style.height = window.innerHeight + "px";
+        win98Window.classList.add("maximized");
+      }
+      resizeCanvas();
+    });
+    // When closing the game, hide the window and reset the game.
+    closeBtn.addEventListener("click", () => {
+      win98Window.style.display = "none";
+      resetGame();
+    });
+    
+    // --- Window Controls for Error Popup ---
+    const minimizeErrorBtn = document.getElementById("minimizeErrorBtn");
+    const maximizeErrorBtn = document.getElementById("maximizeErrorBtn");
+    const closeErrorBtn = document.getElementById("closeErrorBtn");
+    const errorContentElem = errorPopup.querySelector(".win98-content");
+    
+    minimizeErrorBtn.addEventListener("click", () => {
+      errorContentElem.style.display = errorContentElem.style.display === "none" ? "block" : "none";
+    });
+    maximizeErrorBtn.addEventListener("click", () => {
+      if(errorPopup.classList.contains("maximized")){
+        errorPopup.style.width = "300px";
+        errorPopup.classList.remove("maximized");
+      } else {
+        errorPopup.style.width = gameContent.clientWidth + "px";
+        errorPopup.classList.add("maximized");
+      }
+    });
+    closeErrorBtn.addEventListener("click", () => {
+      errorPopup.style.display = "none";
+    });
+    
+    // --- Taskbar Start Menu Toggle ---
+    const startButton = document.getElementById("startButton");
+    const startMenu = document.getElementById("startMenu");
+    startButton.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if(startMenu.style.display === "block") {
+        startMenu.style.display = "none";
+        startButton.classList.remove("active");
+      } else {
+        startMenu.style.display = "block";
+        startButton.classList.add("active");
+      }
+    });
+    document.addEventListener("click", () => {
+      startMenu.style.display = "none";
+      startButton.classList.remove("active");
+    });
+    
+    // --- Desktop Icon for Game: Reopen game window and reset the game ---
+    const gameDesktopIcon = document.getElementById("gameDesktopIcon");
+    gameDesktopIcon.addEventListener("click", () => {
+      win98Window.style.display = "block";
+      resetGame();
+    });
+    
+    // --- Desktop Icon for Admin: Open admin window and reset it ---
+    const adminDesktopIcon = document.getElementById("adminDesktopIcon");
+    const adminWindow = document.getElementById("adminWindow");
+    const adminCloseBtn = document.getElementById("adminCloseBtn");
+    adminDesktopIcon.addEventListener("click", () => {
+      adminWindow.style.display = "block";
+      resetAdminWindow();
+    });
+    adminCloseBtn.addEventListener("click", () => {
+      adminWindow.style.display = "none";
+    });
+    
+    // Global variable to store the admin PIN entry
+    let adminPin = "";
+    
+    function updatePinDisplay() {
+      document.getElementById("pinDisplay").textContent = adminPin;
+    }
+    
+    // Reset admin window and set up dialpad
+    function resetAdminWindow() {
+      const adminContent = document.getElementById("adminContent");
+      adminContent.innerHTML = `
+        <div id="pinDisplay"></div>
+        <div id="dialpad">
+          <button class="dial-btn">1</button>
+          <button class="dial-btn">2</button>
+          <button class="dial-btn">3</button>
+          <button class="dial-btn">4</button>
+          <button class="dial-btn">5</button>
+          <button class="dial-btn">6</button>
+          <button class="dial-btn">7</button>
+          <button class="dial-btn">8</button>
+          <button class="dial-btn">9</button>
+          <button class="dial-btn">Clear</button>
+          <button class="dial-btn">0</button>
+          <button class="dial-btn">Submit</button>
+        </div>
+      `;
+      adminPin = "";
+      updatePinDisplay();
+      document.querySelectorAll('.dial-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          let text = this.textContent;
+          if (text === "Clear") {
+            adminPin = "";
+            updatePinDisplay();
+          } else if (text === "Submit") {
+            if (adminPin === "0806") {
+              adminContent.innerHTML = `<p style="text-align:center; font-size: 24px;">Brajesh 💖 Manya</p>`;
+            } else {
+              adminContent.innerHTML = `<p style="text-align:center; font-size: 24px;">It is a static page, what are you expecting here HackerMan 😑</p>`;
+            }
+          } else {
+            adminPin += text;
+            updatePinDisplay();
+          }
+        });
+      });
+    }
+    
+    // --- Canvas Resize ---
+    function resizeCanvas() {
+      canvas.width = gameContent.clientWidth;
+      canvas.height = gameContent.clientHeight;
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+    
+    // --- Digital Clock Update (current date and time) ---
+    function updateClock() {
+      const now = new Date();
+      const dateString = now.toLocaleDateString();
+      const timeString = now.toLocaleTimeString();
+      document.getElementById("clock").textContent = `${dateString} ${timeString}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+    
+    // --- Game Logic (50% smaller pixel blocks) ---
+    const paddleSpeed = 8;
+    let paddle = {
+      x: canvas.width / 2 - 75,
+      y: canvas.height - 30,
+      width: 150,
+      height: 15,
+      dx: 0,
+    };
+    let ball = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      radius: 10,
+      dx: 4,
+      dy: -4,
+    };
+    let blocks = [];
+    const blockWidth = 15, blockHeight = 15;
+    const letterSpacing = 5;
+    
+    const letters = {
+      C: { width: 4, pattern: [[1,1,1,1], [1,0,0,0], [1,0,0,0], [1,0,0,0], [1,1,1,1]] },
+      O: { width: 4, pattern: [[1,1,1,1], [1,0,0,1], [1,0,0,1], [1,0,0,1], [1,1,1,1]] },
+      M: { width: 5, pattern: [[1,0,0,0,1], [1,1,0,1,1], [1,0,1,0,1], [1,0,0,0,1], [1,0,0,0,1]] },
+      I: { width: 1, pattern: [[1], [1], [1], [1], [1]] },
+      N: { width: 5, pattern: [[1,0,0,0,1], [1,1,0,0,1], [1,0,1,0,1], [1,0,0,1,1], [1,0,0,0,1]] },
+      G: { width: 4, pattern: [[1,1,1,1], [1,0,0,0], [1,0,1,1], [1,0,0,1], [1,1,1,1]] },
+      S: { width: 4, pattern: [[1,1,1,1], [1,0,0,0], [1,1,1,1], [0,0,0,1], [1,1,1,1]] }
+    };
+    
+    function createBlocks() {
+      const phrase = "COMING SOON";
+      let totalWidth = 0;
+      for (let i = 0; i < phrase.length; i++) {
+        let letter = phrase[i];
+        if (letter === " ") {
+          totalWidth += blockWidth * 3 + letterSpacing;
+        } else if (letters[letter]) {
+          totalWidth += letters[letter].width * blockWidth + letterSpacing;
+        }
+      }
+      let startX = (canvas.width - totalWidth) / 2;
+      let startY = 50;
+      for (let i = 0; i < phrase.length; i++) {
+        let letter = phrase[i];
+        if (letter === " ") {
+          startX += blockWidth * 3;
+          continue;
+        }
+        let letterData = letters[letter];
+        if (letterData) {
+          for (let row = 0; row < letterData.pattern.length; row++) {
+            for (let col = 0; col < letterData.pattern[row].length; col++) {
+              if (letterData.pattern[row][col]) {
+                blocks.push({
+                  x: startX + col * blockWidth,
+                  y: startY + row * blockHeight,
+                  width: blockWidth,
+                  height: blockHeight,
+                  active: true,
+                });
+              }
+            }
+          }
+          startX += letterData.width * blockWidth + letterSpacing;
+        }
+      }
+    }
+    createBlocks();
+    
+    function drawPaddle() {
+      ctx.fillStyle = "#000";
+      ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+    }
+    
+    function drawBall() {
+      ctx.fillStyle = "red";
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    // Draw blocks in white
+    function drawBlocks() {
+      blocks.forEach((block) => {
+        if (block.active) {
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(block.x, block.y, block.width, block.height);
+        }
+      });
+    }
+    
+    function checkCollisions() {
+      blocks.forEach((block) => {
+        if (
+          block.active &&
+          ball.x > block.x &&
+          ball.x < block.x + block.width &&
+          ball.y - ball.radius < block.y + block.height &&
+          ball.y + ball.radius > block.y
+        ) {
+          ball.dy *= -1;
+          block.active = false;
+        }
+      });
+    }
+    
+    function moveBall() {
+      ball.x += ball.dx;
+      ball.y += ball.dy;
+      checkCollisions();
+      if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) {
+        ball.dx *= -1;
+      }
+      if (ball.y - ball.radius < 0) {
+        ball.dy *= -1;
+      }
+      if (
+        ball.y + ball.radius > paddle.y &&
+        ball.x > paddle.x &&
+        ball.x < paddle.x + paddle.width
+      ) {
+        ball.dy *= -1;
+      }
+      if (ball.y + ball.radius > canvas.height) {
+        showErrorPopup();
+      }
+    }
+    
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") {
+        paddle.dx = -paddleSpeed;
+      } else if (e.key === "ArrowRight") {
+        paddle.dx = paddleSpeed;
+      }
+    });
+    document.addEventListener("keyup", () => {
+      paddle.dx = 0;
+    });
+    
+    function showErrorPopup() {
+      errorPopup.style.display = "block";
+      errorPopup.style.top = (gameContent.clientHeight - errorPopup.offsetHeight) / 2 + "px";
+      errorPopup.style.left = (gameContent.clientWidth - errorPopup.offsetWidth) / 2 + "px";
+    }
+    
+    errorOkButton.addEventListener("click", () => {
+      errorPopup.style.display = "none";
+      resetGame();
+    });
+    
+    // Reset game: reposition paddle/ball and reactivate all blocks
+    function resetGame() {
+      paddle.x = canvas.width / 2 - paddle.width / 2;
+      paddle.y = canvas.height - 30;
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.dx = 4;
+      ball.dy = -4;
+      blocks.forEach(block => block.active = true);
+      update();
+    }
+    
+    function update() {
+      if (errorPopup.style.display === "block") return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      moveBall();
+      drawBlocks();
+      drawPaddle();
+      drawBall();
+      paddle.x += paddle.dx;
+      if (paddle.x < 0) paddle.x = 0;
+      if (paddle.x + paddle.width > canvas.width)
+        paddle.x = canvas.width - paddle.width;
+      requestAnimationFrame(update);
+    }
+    update();
+  </script>
+</body>
 </html>
