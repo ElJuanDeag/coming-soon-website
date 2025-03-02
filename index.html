@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Araknoid Retro Game</title>
+  <title>Braje.sh</title>
   <style>
     /* Windows XP Bliss wallpaper background */
     body {
@@ -96,7 +96,20 @@
       width: 100%;
       height: 100%;
     }
-    /* Retro error popup styling */
+    /* Instruction overlay displayed over game canvas */
+    #instructions {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 18px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 10px;
+      border: 2px solid #000;
+      z-index: 8;
+    }
+    /* Retro error popup styling (for game over) */
     #errorPopup {
       position: absolute;
       width: 300px;
@@ -125,6 +138,38 @@
       overflow: hidden;
     }
     #errorPopup button {
+      margin-top: 10px;
+      font-family: 'MS Sans Serif', sans-serif;
+    }
+    /* Game complete popup styling */
+    #completePopup {
+      position: absolute;
+      width: 300px;
+      background: #C0C0C0;
+      border: 2px solid #fff;
+      box-shadow: 3px 3px 0 #000;
+      display: none;
+      z-index: 10;
+      box-sizing: border-box;
+    }
+    #completePopup .win98-titlebar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2px 5px;
+      background: linear-gradient(to bottom, #000080, #0000cd);
+      color: #fff;
+      font-size: 14px;
+      user-select: none;
+    }
+    #completePopup .win98-content {
+      background: #fff;
+      padding: 10px;
+      font-size: 12px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    #completePopup button {
       margin-top: 10px;
       font-family: 'MS Sans Serif', sans-serif;
     }
@@ -334,7 +379,11 @@
     </div>
     <div class="win98-content">
       <canvas id="gameCanvas"></canvas>
-      <!-- Retro error popup inside the game window -->
+      <!-- Instruction overlay before game starts -->
+      <div id="instructions">
+        Use Left and Right arrow keys (⬅️➡️) to play the game
+      </div>
+      <!-- Retro error popup inside the game window (for game over) -->
       <div id="errorPopup">
         <div class="win98-titlebar">
           <span>Error</span>
@@ -347,6 +396,19 @@
         <div class="win98-content">
           <p>Game Over!</p>
           <button id="errorOkButton">OK</button>
+        </div>
+      </div>
+      <!-- Game complete popup -->
+      <div id="completePopup">
+        <div class="win98-titlebar">
+          <span>Game complete!</span>
+          <div class="window-controls">
+            <button class="control-btn" id="closeCompleteBtn">X</button>
+          </div>
+        </div>
+        <div class="win98-content">
+          <p>Daym! you are free, you cheeky bugger!<br>now go on explore rest of the website too</p>
+          <button id="completeOkButton">OK</button>
         </div>
       </div>
     </div>
@@ -378,7 +440,7 @@
     </div>
   </div>
   
-  <!-- Start Menu with same icons and texts as desktop icons -->
+  <!-- Start Menu (with same icons/text as desktop icons) -->
   <div id="startMenu">
     <ul>
       <li>
@@ -411,6 +473,14 @@
   </div>
   
   <script>
+    // --- Remove instructions overlay on first key press ---
+    const instructionsDiv = document.getElementById("instructions");
+    document.addEventListener("keydown", () => {
+      if(instructionsDiv.style.display !== "none") {
+        instructionsDiv.style.display = "none";
+      }
+    });
+    
     // --- Window Controls for Main Game Window ---
     const win98Window = document.getElementById("win98-window");
     const gameContent = win98Window.querySelector(".win98-content");
@@ -689,6 +759,10 @@
           block.active = false;
         }
       });
+      // Check if all blocks are destroyed:
+      if (blocks.every(block => !block.active)) {
+        showCompletePopup();
+      }
     }
     
     function moveBall() {
@@ -735,6 +809,22 @@
       resetGame();
     });
     
+    // Show game complete popup
+    function showCompletePopup() {
+      const completePopup = document.getElementById("completePopup");
+      completePopup.style.display = "block";
+      completePopup.style.top = (gameContent.clientHeight - completePopup.offsetHeight) / 2 + "px";
+      completePopup.style.left = (gameContent.clientWidth - completePopup.offsetWidth) / 2 + "px";
+    }
+    
+    // Event listeners for complete popup buttons
+    document.getElementById("closeCompleteBtn").addEventListener("click", () => {
+      document.getElementById("completePopup").style.display = "none";
+    });
+    document.getElementById("completeOkButton").addEventListener("click", () => {
+      document.getElementById("completePopup").style.display = "none";
+    });
+    
     // Reset game: reposition paddle/ball and reactivate all blocks
     function resetGame() {
       paddle.x = canvas.width / 2 - paddle.width / 2;
@@ -748,7 +838,9 @@
     }
     
     function update() {
-      if (errorPopup.style.display === "block") return;
+      // If game complete popup is showing, stop update loop.
+      if(document.getElementById("completePopup").style.display === "block") return;
+      if(errorPopup.style.display === "block") return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       moveBall();
       drawBlocks();
