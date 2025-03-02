@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Araknoid Retro Game</title>
+  <title>Braje.sh</title>
   <style>
     /* Windows XP Bliss wallpaper background */
     body {
@@ -197,13 +197,12 @@
       height: 16px;
       margin-right: 5px;
     }
-    /* Right side of taskbar: container for activation text and clock */
+    /* Right side of taskbar: container for clock */
     #taskbar-right {
       margin-left: auto;
       display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 2px;
+      align-items: center;
+      gap: 10px;
       border-left: 2px solid #fff;
       padding-left: 10px;
       font-size: 14px;
@@ -214,9 +213,17 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    /* Activation text placed above the taskbar */
     #activationText {
+      position: fixed;
+      bottom: 40px;
+      left: 0;
+      width: 100%;
+      text-align: center;
       font-size: 16px;
       opacity: 0.65;
+      font-family: 'MS Sans Serif', sans-serif;
+      z-index: 1002;
     }
     /* Admin Window styling */
     #adminWindow {
@@ -268,6 +275,11 @@
   </style>
 </head>
 <body>
+  <!-- Activation text placed above the taskbar -->
+  <div id="activationText">
+    Made with love by Brajesh Inspired from 98.js.org
+  </div>
+
   <!-- Desktop icons (vertical column on the left) -->
   <div id="desktopIcons">
     <!-- GitHub Icon -->
@@ -353,11 +365,8 @@
       <img src="https://98.js.org/images/start.png" alt="Start">
       Start
     </button>
-    <!-- Right: Activation text and current date/time -->
+    <!-- Right: Current date and time -->
     <div id="taskbar-right">
-      <div id="activationText">
-        Made with love by Brajesh Inspired from 98.js.org
-      </div>
       <span id="clock"></span>
     </div>
   </div>
@@ -510,9 +519,9 @@
             updatePinDisplay();
           } else if (text === "Submit") {
             if (adminPin === "0806") {
-              adminContent.innerHTML = `<p style="text-align:center; font-size: 24px;">Brajesh 💖 Manya</p>`;
+              document.getElementById("adminContent").innerHTML = `<p style="text-align:center; font-size: 24px;">Brajesh 💖 Manya</p>`;
             } else {
-              adminContent.innerHTML = `<p style="text-align:center; font-size: 24px;">It is a static page, what are you expecting here HackerMan 😑</p>`;
+              document.getElementById("adminContent").innerHTML = `<p style="text-align:center; font-size: 24px;">It is a static page, what are you expecting here HackerMan 😑</p>`;
             }
           } else {
             adminPin += text;
