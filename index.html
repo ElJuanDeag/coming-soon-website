@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Braje.sh</title>
+  <title>Araknoid Retro Game</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -45,6 +45,12 @@
       <img src="https://img.icons8.com/?size=32&id=4BQ253NEFFli&format=png&color=000000" alt="Admin">
       <span>Admin</span>
     </div>
+   <div class="desktop-icon" id="cvDesktopIcon">
+     <a href="#">
+        <img src="https://img.icons8.com/?size=32&id=72428&format=png&color=000000" alt="CV">
+        <span>CV</span>
+     </a>
+   </div>
   </div>
 
   <!-- Retro Windows 98 game window -->
@@ -107,6 +113,19 @@
     </div>
   </div>
 
+ <div id="cvWindow">
+   <div class="win98-titlebar">
+     <span>Brajesh CV</span>
+     <div class="window-controls">
+       <button class="control-btn" id="cvCloseBtn">X</button>
+     </div>
+   </div>
+   <div class="win98-content">
+     <iframe src="Brajesh_CV.pdf" width="100%" height="100%"></iframe>
+   </div>
+ </div>
+
+
   <!-- Taskbar -->
   <div id="taskbar">
     <!-- Left: Start Button using provided icon -->
@@ -149,9 +168,14 @@
         <img src="https://img.icons8.com/?size=32&id=4BQ253NEFFli&format=png&color=000000" alt="Admin">
         Admin
       </li>
+     <li id="startMenuCV">
+       <img src="https://img.icons8.com/?size=32&id=72428&format=png&color=000000" alt="CV">
+       CV
+     </li>
+
     </ul>
   </div>
-
+  
   <script src="script.js"></script>
 </body>
 </html>
