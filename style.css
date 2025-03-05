@@ -1,0 +1,357 @@
+/* Windows XP Bliss wallpaper background */
+body {
+  margin: 0;
+  background: url('https://archive.org/download/windows-xp-bliss-wallpaper/windows-xp-bliss-4k-lu-1920x1080.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: #000;
+  font-family: 'MS Sans Serif', sans-serif;
+  position: relative;
+}
+
+/* Desktop icons styling in a vertical column on the left */
+#desktopIcons {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.desktop-icon {
+  text-align: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.desktop-icon a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.desktop-icon img {
+  display: block;
+  margin: 0 auto;
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+  border: none;
+  box-shadow: none;
+}
+
+/* Retro Windows 98 game window styling */
+#win98-window {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 800px;
+  height: 600px;
+  transform: translate(-50%, -50%);
+  border: 2px solid #fff;
+  background: #C0C0C0;
+  box-shadow: 3px 3px 0 #000;
+  z-index: 5;
+}
+
+.win98-titlebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 5px;
+  background: linear-gradient(to bottom, #000080, #0000cd);
+  color: #fff;
+  font-size: 14px;
+  user-select: none;
+}
+
+.window-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.control-btn {
+  background: #C0C0C0;
+  border: 2px outset #fff;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  line-height: 16px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.control-btn:active {
+  border: 2px inset #fff;
+}
+
+.win98-content {
+  background: #fff;
+  position: relative;
+  width: 100%;
+  height: calc(100% - 24px);
+  overflow: hidden;
+}
+
+/* Canvas fills the game window content area */
+#gameCanvas {
+  display: block;
+  background: #222;
+  width: 100%;
+  height: 100%;
+}
+
+/* Instruction overlay displayed over game canvas */
+#instructions {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  border: 2px solid #000;
+  z-index: 8;
+}
+
+/* Retro error popup styling (for game over) */
+#errorPopup {
+  position: absolute;
+  width: 300px;
+  background: #C0C0C0;
+  border: 2px solid #fff;
+  box-shadow: 3px 3px 0 #000;
+  display: none;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+#errorPopup .win98-titlebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 5px;
+  background: linear-gradient(to bottom, #000080, #0000cd);
+  color: #fff;
+  font-size: 14px;
+  user-select: none;
+}
+
+#errorPopup .win98-content {
+  background: #fff;
+  padding: 10px;
+  font-size: 12px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+#errorPopup button {
+  margin-top: 10px;
+  font-family: 'MS Sans Serif', sans-serif;
+}
+
+/* Game complete popup styling */
+#completePopup {
+  position: absolute;
+  width: 300px;
+  background: #C0C0C0;
+  border: 2px solid #fff;
+  box-shadow: 3px 3px 0 #000;
+  display: none;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+#completePopup .win98-titlebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 5px;
+  background: linear-gradient(to bottom, #000080, #0000cd);
+  color: #fff;
+  font-size: 14px;
+  user-select: none;
+}
+
+#completePopup .win98-content {
+  background: #fff;
+  padding: 10px;
+  font-size: 12px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+#completePopup button {
+  margin-top: 10px;
+  font-family: 'MS Sans Serif', sans-serif;
+}
+
+/* Taskbar styling */
+#taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: #C0C0C0;
+  border-top: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+/* Left side of taskbar: Start button */
+#startButton {
+  display: flex;
+  align-items: center;
+  background: #C0C0C0;
+  border: 2px outset #fff;
+  padding: 2px 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#startButton.active {
+  border: 2px inset #fff;
+}
+
+#startButton img {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+}
+
+/* Start Menu fixed size and styled like desktop icons */
+#startMenu {
+  position: fixed;
+  bottom: 40px;
+  left: 10px;
+  width: 207px;
+  height: 304px;
+  background: #C0C0C0;
+  border: 2px solid #fff;
+  box-shadow: 3px 3px 0 #000;
+  display: none;
+  z-index: 1001;
+  font-family: 'MS Sans Serif', sans-serif;
+  box-sizing: border-box;
+}
+
+#startMenu ul {
+  list-style: none;
+  margin: 0;
+  padding: 5px;
+}
+
+#startMenu li {
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+#startMenu li a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+#startMenu li:hover {
+  background: #000080;
+  color: #fff;
+}
+
+#startMenu li img {
+  width: 32px;
+  height: 32px;
+  margin-right: 5px;
+}
+
+/* Right side of taskbar: container for clock */
+#taskbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-left: 2px solid #fff;
+  padding-left: 10px;
+  font-size: 14px;
+  font-family: 'MS Sans Serif', sans-serif;
+}
+
+#clock {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Activation text placed above the taskbar */
+#activationText {
+  position: fixed;
+  bottom: 40px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  opacity: 0.65;
+  font-family: 'MS Sans Serif', sans-serif;
+  z-index: 1002;
+}
+
+/* Admin Window styling */
+#adminWindow {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 300px;
+  transform: translate(-50%, -50%);
+  border: 2px solid #fff;
+  background: #C0C0C0;
+  box-shadow: 3px 3px 0 #000;
+  z-index: 6;
+  display: none;
+  font-family: 'MS Sans Serif', sans-serif;
+  box-sizing: border-box;
+}
+
+/* Dialpad styles for admin window */
+#adminContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 24px);
+}
+
+#pinDisplay {
+  font-size: 24px;
+  margin-bottom: 10px;
+  text-align: center;
+  min-height: 30px;
+}
+
+#dialpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.dial-btn {
+  padding: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  background: #C0C0C0;
+  border: 2px outset #fff;
+}
+
+.dial-btn:active {
+  border: 2px inset #fff;
+}
