@@ -179,7 +179,7 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// --- Game Logic (50% smaller pixel blocks) ---
+// --- Game Logic ---
 const paddleSpeed = 8;
 let paddle = {
   x: canvas.width / 2 - 75,
@@ -199,13 +199,13 @@ let blocks = [];
 const blockWidth = 15, blockHeight = 15;
 const letterSpacing = 5;
 const letters = {
-  C: { width: 4, pattern: [[1, 1, 1, 1], [1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0], [1, 1, 1, 1]] },
-  O: { width: 4, pattern: [[1, 1, 1, 1], [1, 0, 0, 1], [1, 0, 0, 1], [1, 0, 0, 1], [1, 1, 1, 1]] },
-  M: { width: 5, pattern: [[1, 0, 0, 0, 1], [1, 1, 0, 1, 1], [1, 0, 1, 0, 1], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1]] },
+  C: { width: 4, pattern: [[1,1,1,1], [1,0,0,0], [1,0,0,0], [1,0,0,0], [1,1,1,1]] },
+  O: { width: 4, pattern: [[1,1,1,1], [1,0,0,1], [1,0,0,1], [1,0,0,1], [1,1,1,1]] },
+  M: { width: 5, pattern: [[1,0,0,0,1], [1,1,0,1,1], [1,0,1,0,1], [1,0,0,0,1], [1,0,0,0,1]] },
   I: { width: 1, pattern: [[1], [1], [1], [1], [1]] },
-  N: { width: 5, pattern: [[1, 0, 0, 0, 1], [1, 1, 0, 0, 1], [1, 0, 1, 0, 1], [1, 0, 0, 1, 1], [1, 0, 0, 0, 1]] },
-  G: { width: 4, pattern: [[1, 1, 1, 1], [1, 0, 0, 0], [1, 0, 1, 1], [1, 0, 0, 1], [1, 1, 1, 1]] },
-  S: { width: 4, pattern: [[1, 1, 1, 1], [1, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 1], [1, 1, 1, 1]] }
+  N: { width: 5, pattern: [[1,0,0,0,1], [1,1,0,0,1], [1,0,1,0,1], [1,0,0,1,1], [1,0,0,0,1]] },
+  G: { width: 4, pattern: [[1,1,1,1], [1,0,0,0], [1,0,1,1], [1,0,0,1], [1,1,1,1]] },
+  S: { width: 4, pattern: [[1,1,1,1], [1,0,0,0], [1,1,1,1], [0,0,0,1], [1,1,1,1]] }
 };
 function createBlocks() {
   const phrase = "COMING SOON";
@@ -298,12 +298,26 @@ function moveBall() {
   if (ball.y - ball.radius < 0) {
     ball.dy *= -1;
   }
+  // Paddle collision with exaggerated reflection:
   if (
-    ball.y + ball.radius > paddle.y &&
+    ball.y + ball.radius >= paddle.y &&
     ball.x > paddle.x &&
     ball.x < paddle.x + paddle.width
   ) {
-    ball.dy *= -1;
+    // Calculate collision point relative to paddle center (range -1 to 1)
+    let collidePoint = (ball.x - (paddle.x + paddle.width/2)) / (paddle.width/2);
+    // Maximum reflection angle (60° in radians)
+    let maxAngle = Math.PI / 3;
+    let angle = collidePoint * maxAngle;
+    // Exaggerate the angle by 10%
+    let factor = 0.1;
+    let newAngle = angle * (1 + factor);
+    // Clamp the angle within the maximum range
+    newAngle = Math.max(-maxAngle, Math.min(maxAngle, newAngle));
+    // Calculate the current ball speed
+    let speed = Math.sqrt(ball.dx * ball.dx + ball.dy * ball.dy);
+    ball.dx = speed * Math.sin(newAngle);
+    ball.dy = -speed * Math.cos(newAngle);
   }
   if (ball.y + ball.radius > canvas.height) {
     showErrorPopup();
@@ -361,7 +375,7 @@ function resetGame() {
 }
 
 function update() {
-  // If game complete popup or error popup is showing, stop update loop.
+  // If game complete or error popup is showing, stop update loop.
   if (document.getElementById("completePopup").style.display === "block") return;
   if (errorPopup.style.display === "block") return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -371,8 +385,28 @@ function update() {
   drawBall();
   paddle.x += paddle.dx;
   if (paddle.x < 0) paddle.x = 0;
-  if (paddle.x + paddle.width > canvas.width)
+  if (paddle.x + paddle.width > canvas.width) {
     paddle.x = canvas.width - paddle.width;
+  }
   requestAnimationFrame(update);
 }
 update();
+// --- Desktop Icon for CV: Open CV window ---
+const cvDesktopIcon = document.getElementById("cvDesktopIcon");
+const cvWindow = document.getElementById("cvWindow");
+cvDesktopIcon.addEventListener("click", () => {
+  cvWindow.style.display = "block";
+});
+
+// --- Start Menu CV item event listener ---
+document.getElementById("startMenuCV").addEventListener("click", () => {
+  cvWindow.style.display = "block";
+  startMenu.style.display = "none";
+  startButton.classList.remove("active");
+});
+
+// --- CV Window close button ---
+const cvCloseBtn = document.getElementById("cvCloseBtn");
+cvCloseBtn.addEventListener("click", () => {
+  cvWindow.style.display = "none";
+});
