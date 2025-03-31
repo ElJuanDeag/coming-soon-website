@@ -248,7 +248,7 @@ function createBlocks() {
 createBlocks();
 
 function drawPaddle() {
-  ctx.fillStyle = "#000";
+  ctx.fillStyle = "#ffffff";
   ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
 }
 
